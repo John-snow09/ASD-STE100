@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+
+# Project Specific
+uploads/*
+output/*
+!uploads/.gitkeep
+!output/.gitkeep
+
+# AI Models & Large Data
+models/
+*.bin
+*.gguf
+*.jsonl
+
+# OS Specific
+.DS_Store
+Thumbs.db

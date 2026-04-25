@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pymupdf
+nltk
+python-multipart
+# Add your local AI library if needed, e.g., langchain or openai

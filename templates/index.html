@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ASD-STE100 Checker</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background: #f0f2f5; color: #333; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        
+        /* Upload Section */
+        .upload-section { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px dashed #dee2e6; text-align: center; margin-bottom: 30px; }
+        
+        /* Download Alert */
+        .download-box { background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; border: 1px solid #c3e6cb; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-download { background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .btn-download:hover { background: #218838; }
+
+        /* Error Display */
+        .error-card { border-left: 5px solid #e74c3c; margin-bottom: 20px; padding: 15px; background: #fff5f5; border-radius: 0 8px 8px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .page-badge { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; text-transform: uppercase; }
+        .original-text { font-style: italic; color: #555; margin: 10px 0; display: block; background: white; padding: 10px; border-radius: 4px; border: 1px solid #eee; }
+        .suggestion-title { color: #27ae60; font-weight: bold; margin-top: 10px; }
+        ul { margin-top: 5px; }
+        li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>ASD-STE100 Compliance Analyzer</h2>
+        
+        <div class="upload-section">
+            <form action="/analyze" method="post" enctype="multipart/form-data">
+                <p>Upload your technical manual (PDF) for STE-100 validation</p>
+                <input type="file" name="file" accept=".pdf" required>
+                <button type="submit" style="padding: 8px 15px; cursor: pointer;">Start Analysis</button>
+            </form>
+        </div>
+
+        {% if highlighted_file %}
+        <div class="download-box">
+            <span><strong>Analysis Complete!</strong> A highlighted version of your document is ready.</span>
+            <a href="/download/{{ highlighted_file }}" class="btn-download">Download Result PDF</a>
+        </div>
+        {% endif %}
+
+        <div id="results">
+            {% if results %}
+                <h3>Found {{ results|length }} potential violations in <code>{{ filename }}</code></h3>
+                
+                {% for error in results %}
+               <div class="error-card">
+                <div>
+                    <span class="page-badge">Page {{ error.page + 1 }}</span>
+                </div>
+                
+                <p><strong>Original Sentence:</strong></p>
+                <span class="original-text">"{{ error.original }}"</span>
+                
+                <div style="background: #e6fffa; border: 1px solid #38b2ac; padding: 15px; border-radius: 6px; margin: 15px 0;">
+                    <p style="color: #2c7a7b; font-weight: bold; margin-top: 0;">✅ Proposed STE Rewrite:</p>
+                    <p style="font-size: 1.1em; color: #234e52; margin-bottom: 0;">"{{ error.correction }}"</p>
+                </div>
+                
+                <p class="suggestion-title">Why this needs fixing:</p>
+                <ul style="font-size: 0.9em; color: #666;">
+                    {% for note in error.suggestions %}
+                    <li>{{ note }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+                {% endfor %}
+            {% elif results == [] %}
+                <div style="text-align: center; padding: 40px;">
+                    <h1 style="font-size: 3em;">✅</h1>
+                    <p>No STE-100 violations found. This document follows the simplified technical English norms.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
