@@ -3,4 +3,5 @@ uvicorn
 pymupdf
 nltk
 python-multipart
+jinja2
 # Add your local AI library if needed, e.g., langchain or openai
